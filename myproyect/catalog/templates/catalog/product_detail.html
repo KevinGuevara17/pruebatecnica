@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.title }} - GoyaIncol</title>
+</head>
+<body>
+    <a href="{% url 'catalog:product_list' %}">&laquo; Volver al catálogo</a>
+    
+    <hr>
+
+    <h1>{{ product.title }}</h1>
+    <ul>
+        <li><strong>Item:</strong> {{ product.item }}</li>
+        <li><strong>Área de Producción:</strong> {{ product.area }}</li>
+        <li><strong>Precio:</strong> ${{ product.price }} COP</li>
+    </ul>
+    
+    <h3>Descripción:</h3>
+    <p>{{ product.description }}</p>
+</body>
+</html>
