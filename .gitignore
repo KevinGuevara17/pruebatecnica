@@ -1,0 +1,22 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+
+# Python / Django
+*.pyc
+__pycache__/
+db.sqlite3
+staticfiles/
+media/
+
+# Node / Tailwind
+node_modules/
+
+# IDEs (VS Code / PyCharm)
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
