@@ -1,6 +1,7 @@
 ---
 config:
   layout: elk
+  theme: dark
 ---
 flowchart TD
     A[Se registra usuario] --> B[(Biométrico DB)]
@@ -27,16 +28,4 @@ flowchart TD
     L --> DB4[(Base de Datos Tiquetera)]
     W --> DB5[(Base de Datos App 5)]
     
-    classDef registro fill:#f0fdf4,stroke:#4ade80
-    classDef biometric fill:#eef2ff,stroke:#818cf8
-    classDef api fill:#f0f9ff,stroke:#38bdf8
-    classDef sync fill:#fef2f2,stroke:#f87171
-    classDef app fill:#f5f3ff,stroke:#a78bfa
-    classDef database fill:#fdf4ff,stroke:#e879f9
-    classDef password fill:#fff7ed,stroke:#fb923c
-    
-    class A,F registro
-    class B,E,O,DB1,DB2,DB3,DB4,DB5 database
-    class C,G,H,P api
-    class D,N sync
-    class I,J,K,L,W app
+    classDef default fill:#404040,stroke:#e5e5e5,stroke-width:1px,color:#ffffff
