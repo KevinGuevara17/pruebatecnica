@@ -8,7 +8,7 @@ flowchart TD
     A[Se registra usuario] --> B[(Biométrico DB)]
     B --> C[API consulta datos]
     C --> D[Tiquetera sincroniza datos nuevos]
-    D --> E[(Base de Datos Central)]
+    D --> E[(Base de Datos tiquetera)]
     E --> F[Creación de usuarios]
     F --> G[Envía datos a API]
     G --> H{API distribuye a 5 apps}
