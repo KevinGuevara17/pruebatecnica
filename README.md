@@ -1,3 +1,4 @@
+```mermaid
 ---
 config:
   layout: elk
@@ -29,3 +30,4 @@ flowchart TD
     W --> DB5[(Base de Datos App 5)]
     
     classDef default fill:#404040,stroke:#e5e5e5,stroke-width:1px,color:#ffffff
+```
