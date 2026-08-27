@@ -21,7 +21,7 @@ flowchart TD
     H -->|Krono| J[Krono recibe datos/actualización]
     H -->|Trazum| K[Trazum recibe datos/actualización]
     H -->|Tiquetera| L[Tiquetera recibe datos/actualización]
-    H -->|Nueva App| W[App 5 recibe datos/actualización]
+    H -->|Nueva App| W[App 5 recibe /actualización]
     
     I --> DB1[(Base de Datos GoC)]
     J --> DB2[(Base de Datos Krono)]
