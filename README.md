@@ -13,25 +13,26 @@ flowchart TD
     F --> G[Sistema genera Token de Activación]
     G --> H[Envía Correo Electrónico con Enlace Seguro]
     
-    subgraph Onboarding [Flujo de Establecimiento en Tiquetera]
-        H --> I[Usuario abre enlace y es redirigido a Vista Web Tiquetera]
-        I --> J[Usuario define su nueva contraseña]
-        J --> K[Tiquetera valida Token y guarda clave local]
+    subgraph Onboarding [Flujo de Establecimiento de Contraseña]
+        H --> I[Usuario abre enlace en vista web Tiquetera]
+        I --> J[Usuario ingresa su nueva contraseña]
+        J --> K[Tiquetera envía credenciales a API]
+        K --> L[API valida Token y actualiza clave]
     end
 
-    K --> L[Tiquetera dispara Fan-Out a API]
+    L --> M[API dispara Fan-Out masivo]
     
     N[Cambio de contraseña habitual] --> O[(BD Tiquetera)]
     O --> P[Tiquetera envía a API]
-    P --> L
+    P --> M
     
-    L --> M{API distribuye a 5 apps}
+    M --> Q{API distribuye a 5 apps}
     
-    M -->|GoC| S1[GoC recibe datos/actualización]
-    M -->|Krono| S2[Krono recibe datos/actualización]
-    M -->|Trazum| S3[Trazum recibe datos/actualización]
-    M -->|Tiquetera| S4[Tiquetera recibe datos/actualización]
-    M -->|Wiki.js / App 5| S5[App 5 recibe /actualización vía GraphQL]
+    Q -->|GoC| S1[GoC recibe datos/actualización]
+    Q -->|Krono| S2[Krono recibe datos/actualización]
+    Q -->|Trazum| S3[Trazum recibe datos/actualización]
+    Q -->|Tiquetera| S4[Tiquetera recibe datos/actualización]
+    Q -->|Wiki.js / App 5| S5[App 5 recibe /actualización vía GraphQL]
     
     S1 --> DB1[(Base de Datos GoC)]
     S2 --> DB2[(Base de Datos Krono)]
