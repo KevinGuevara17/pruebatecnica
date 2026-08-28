@@ -1,4 +1,3 @@
-```mermaid
 ---
 config:
   layout: elk
@@ -13,29 +12,30 @@ flowchart TD
     F --> G[Sistema genera Token de Activación]
     G --> H[Envía Correo Electrónico con Enlace Seguro]
     
-    subgraph Onboarding [Flujo de Establecimiento de Contraseña]
-        H --> I[Usuario abre enlace y define Contraseña]
-        I --> J[Tiquetera valida Token y guarda clave local]
+    subgraph Onboarding [Flujo de Establecimiento en Tiquetera]
+        H --> I[Usuario abre enlace y es redirigido a Vista Web Tiquetera]
+        I --> J[Usuario define su nueva contraseña]
+        J --> K[Tiquetera valida Token y guarda clave local]
     end
 
-    J --> K[Tiquetera dispara Fan-Out a API]
+    K --> L[Tiquetera dispara Fan-Out a API]
     
     N[Cambio de contraseña habitual] --> O[(BD Tiquetera)]
     O --> P[Tiquetera envía a API]
-    P --> K
+    P --> L
     
-    K --> L{API distribuye a 5 apps}
+    L --> M{API distribuye a 5 apps}
     
-    L -->|GoC| M[GoC recibe datos/actualización]
-    L -->|Krono| N1[Krono recibe datos/actualización]
-    L -->|Trazum| Q[Trazum recibe datos/actualización]
-    L -->|Tiquetera| R[Tiquetera recibe datos/actualización]
-    L -->|Wiki.js / App 5| W[App 5 recibe /actualización vía GraphQL]
+    M -->|GoC| S1[GoC recibe datos/actualización]
+    M -->|Krono| S2[Krono recibe datos/actualización]
+    M -->|Trazum| S3[Trazum recibe datos/actualización]
+    M -->|Tiquetera| S4[Tiquetera recibe datos/actualización]
+    M -->|Wiki.js / App 5| S5[App 5 recibe /actualización vía GraphQL]
     
-    M --> DB1[(Base de Datos GoC)]
-    N1 --> DB2[(Base de Datos Krono)]
-    Q --> DB3[(Base de Datos Trazum)]
-    R --> DB4[(Base de Datos Tiquetera)]
-    W --> DB5[(Base de Datos App 5)]
+    S1 --> DB1[(Base de Datos GoC)]
+    S2 --> DB2[(Base de Datos Krono)]
+    S3 --> DB3[(Base de Datos Trazum)]
+    S4 --> DB4[(Base de Datos Tiquetera)]
+    S5 --> DB5[(Base de Datos App 5)]
     
     classDef default fill:#404040,stroke:#e5e5e5,stroke-width:1px,color:#ffffff
