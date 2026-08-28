@@ -1,43 +1,38 @@
 ```mermaid
----
-config:
-  layout: elk
-  theme: dark
----
 flowchart TD
-    A[Se registra usuario] --> B[(Biométrico DB)]
-    B --> C[API consulta datos]
-    C --> D[Tiquetera sincroniza datos nuevos]
-    D --> E[(Base de Datos tiquetera)]
-    E --> F[Creación de usuarios con estado pendiente]
-    F --> G[Sistema genera Token de Activación]
-    G --> H[Envía Correo Electrónico con Enlace Seguro]
-    
-    subgraph Onboarding [Flujo de Establecimiento de Contraseña]
-        H --> I[Usuario abre enlace en vista web Tiquetera]
-        I --> J[Usuario ingresa su nueva contraseña]
-        J --> K[Tiquetera envía credenciales a API]
-        K --> L[API valida Token y actualiza clave]
+    classDef usuario fill:#8e44ad,stroke:#9b59b6,stroke-width:2px,color:#fff
+    classDef sso fill:#27ae60,stroke:#2ecc71,stroke-width:2px,color:#fff
+    classDef emergencia fill:#c0392b,stroke:#e74c3c,stroke-width:2px,color:#fff
+    classDef db fill:#2c3e50,stroke:#34495e,stroke-width:2px,color:#fff
+
+    U([Usuario en Navegador]):::usuario
+
+    subgraph Fase_1 [1. Fan-Out Original: Carga de Respaldo]
+        R1[Registro o Cambio de Clave] --> R2[API despacha Fan-Out asincrono]
+        R2 -.->|Replica hashes pbkdf2_sha256| BD_GoC[(BD GoC)]:::db
+        R2 -.->|Replica hashes pbkdf2_sha256| BD_Krono[(BD Krono)]:::db
     end
 
-    L --> M[API dispara Fan-Out masivo]
-    
-    N[Cambio de contraseña habitual] --> O[(BD Tiquetera)]
-    O --> P[Tiquetera envía a API]
-    P --> M
-    
-    M --> Q{API distribuye a 5 apps}
-    
-    Q -->|GoC| S1[GoC recibe datos/actualización]
-    Q -->|Krono| S2[Krono recibe datos/actualización]
-    Q -->|Trazum| S3[Trazum recibe datos/actualización]
-    Q -->|Tiquetera| S4[Tiquetera recibe datos/actualización]
-    Q -->|Wiki.js / App 5| S5[App 5 recibe /actualización vía GraphQL]
-    
-    S1 --> DB1[(Base de Datos GoC)]
-    S2 --> DB2[(Base de Datos Krono)]
-    S3 --> DB3[(Base de Datos Trazum)]
-    S4 --> DB4[(Base de Datos Tiquetera)]
-    S5 --> DB5[(Base de Datos App 5)]
-    
-    classDef default fill:#404040,stroke:#e5e5e5,stroke-width:1px,color:#ffffff
+    subgraph Fase_2 [2. Flujo Normal: Autenticacion Descentralizada SSO]
+        U -->|1. Ingresa credenciales| Login[Portal de Login API]
+        Login --> API_Central{API Central en linea?}:::sso
+        
+        API_Central -->|SI: Valida usuario| GeneraTokens[Emite Tokens]
+        GeneraTokens -->|Access en RAM y Refresh en Cookie| U
+        
+        U -->|2. Navega a app| Middleware[Middleware de la App Web]
+        Middleware --> ValidaFirma{Token valido?}
+        ValidaFirma -->|Si, vigente| AccesoOK[Acceso Concedido]
+        
+        ValidaFirma -->|No, expiro| Error401[Error 401 HTTP]
+        Error401 -->|3. Interceptor web| Refrescar[Pide nuevo token silenciosamente]
+        Refrescar -->|Envia Cookie segura| API_Central
+    end
+
+    subgraph Fase_3 [3. Plan B: Caida del SSO]
+        API_Central -->|NO: Error o Timeout| Caida[Se congela validacion central]:::emergencia
+        Caida -->|Usuario va a URL alterna| LoginEmergencia[Portal de Emergencia Local]
+        LoginEmergencia -->|App consulta su BD| BD_Local{Valida en BD Local}
+        BD_Krono -.->|Suministra datos a| BD_Local
+        BD_Local -->|Hash coincide| AccesoDegradado[Acceso en Modo Emergencia]
+    end
